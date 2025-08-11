@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnCour Social - Modern Social Media Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tangerine:wght@400;700&family=Libre+Franklin:wght@300;400;500;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes shimmer {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        @keyframes cameraOpen {
+            0% {
+                clip-path: circle(0% at 50% 50%);
+                opacity: 1;
+            }
+            80% {
+                clip-path: circle(60% at 50% 50%);
+                opacity: 0.8;
+            }
+            100% {
+                clip-path: circle(100% at 50% 50%);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes lensRotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.1); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+        
+        @keyframes apertureBlade {
+            0% {
+                transform: translate(-50%, -50%) rotate(var(--rotation)) scaleY(1);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(calc(var(--rotation) + 45deg)) scaleY(0.1);
+                opacity: 0;
+            }
+        }
+        
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-shimmer { animation: shimmer 3s ease-in-out infinite; }
+        .animate-fade-in { animation: fadeIn 1s ease-out forwards; }
+        .animate-fade-in-up { animation: fadeInUp 1s ease-out forwards; }
+        .animate-fade-in-left { animation: fadeInLeft 1s ease-out forwards; }
+        .animate-fade-in-right { animation: fadeInRight 1s ease-out forwards; }
+        .animate-bounce { animation: bounce 2s infinite; }
+        
+        .camera-lens-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000000;
+            z-index: 9999;
+            pointer-events: none;
+            animation: cameraOpen 4s ease-out forwards;
+        }
+        
+        .lens-aperture {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            animation: lensRotate 4s ease-out forwards;
+        }
+        
+        .aperture-blade {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 150px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(200,200,200,0.7));
+            transform-origin: bottom center;
+            animation: apertureBlade 4s ease-out forwards;
+            border-radius: 2px;
+        }
+        
+        .delayed-1 { animation-delay: 0.3s; }
+        .delayed-2 { animation-delay: 0.6s; }
+        .delayed-3 { animation-delay: 0.9s; }
+        .delayed-4 { animation-delay: 1.2s; }
+        
+        .bg-gradient-diagonal {
+            background: linear-gradient(135deg, #f7d6e0 0%, #e8e8e8 100%);
+        }
+        
+        .hover-glow:hover {
+            box-shadow: 0 0 15px rgba(247, 214, 224, 0.7);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, #f7d6e0 0%, #f4c2c2 30%, #e8e8e8 70%, #f7d6e0 100%);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(247, 214, 224, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transition: left 0.8s ease;
+        }
+        
+        .btn-gradient:hover::before {
+            left: 100%;
+        }
+        
+        .btn-gradient::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(135deg, #f7d6e0, #e8e8e8, #f7d6e0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .btn-gradient:hover::after {
+            opacity: 1;
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(247, 214, 224, 0.6), 0 0 25px rgba(247, 214, 224, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            background: linear-gradient(135deg, #f9dde6 0%, #f6c7c7 30%, #ebebeb 70%, #f9dde6 100%);
+        }
+        
+        .btn-gradient:active {
+            transform: translateY(-2px) scale(0.98);
+            transition: all 0.1s ease;
+            box-shadow: 0 6px 15px rgba(247, 214, 224, 0.4);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tangerine {
+            font-family: 'Tangerine', cursive;
+        }
+        
+        .libra-sans {
+            font-family: 'Libre Franklin', sans-serif;
+        }
+        
+        /* Navigation Link Hover Effects */
+        .nav-link {
+            position: relative;
+            padding: 8px 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #f7d6e0, #f4c2c2, #f7d6e0);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(247, 214, 224, 0.1), rgba(244, 194, 194, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .nav-link:hover::before {
+            width: 80%;
+        }
+        
+        .nav-link:hover::after {
+            opacity: 1;
+        }
+        
+        .nav-link:hover {
+            transform: translateY(-2px) scale(1.05);
+            color: #be185d;
+            text-shadow: 0 2px 4px rgba(247, 214, 224, 0.3);
+            box-shadow: 0 4px 12px rgba(247, 214, 224, 0.4), 0 0 15px rgba(247, 214, 224, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-link:active {
+            transform: translateY(0) scale(1.02);
+            transition: all 0.1s ease;
+        }
+        
+        /* Active Section Indicator */
+        .nav-link.active {
+            color: #be185d;
+            font-weight: 600;
+        }
+        
+        .nav-link.active::before {
+            width: 80%;
+            background: linear-gradient(90deg, #be185d, #f4c2c2, #be185d);
+        }
+        
+        .nav-link.active::after {
+            opacity: 0.3;
+            background: linear-gradient(135deg, rgba(190, 24, 93, 0.1), rgba(244, 194, 194, 0.1));
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        @keyframes border-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(236, 72, 153, 0.4), 0 0 40px rgba(244, 114, 182, 0.3), 0 0 60px rgba(251, 146, 60, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(244, 114, 182, 0.5), 0 0 50px rgba(236, 72, 153, 0.4), 0 0 70px rgba(251, 146, 60, 0.3);
+            }
+        }
+        
+        @keyframes border-rotate {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        .animate-border-glow {
+            animation: border-glow 3s ease-in-out infinite;
+        }
+        
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(45deg, #ec4899, #f472b6, #fb923c, #fbbf24);
+            background-size: 400% 400%;
+            animation: border-rotate 4s ease infinite;
+            padding: 3px;
+            border-radius: 1.75rem;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: white;
+            border-radius: 1.5rem;
+            z-index: 1;
+        }
+        
+        .gradient-border > * {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body class="bg-gradient-diagonal min-h-screen overflow-x-hidden">
+    <!-- Camera Lens Animation Overlay -->
+    <div class="camera-lens-overlay">
+        <div class="lens-aperture">
+            <div class="aperture-blade" style="--rotation: 0deg;"></div>
+            <div class="aperture-blade" style="--rotation: 45deg;"></div>
+            <div class="aperture-blade" style="--rotation: 90deg;"></div>
+            <div class="aperture-blade" style="--rotation: 135deg;"></div>
+            <div class="aperture-blade" style="--rotation: 180deg;"></div>
+            <div class="aperture-blade" style="--rotation: 225deg;"></div>
+            <div class="aperture-blade" style="--rotation: 270deg;"></div>
+            <div class="aperture-blade" style="--rotation: 315deg;"></div>
+        </div>
+    </div>
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white bg-opacity-80 backdrop-blur-sm shadow-sm">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo - left aligned on all screens -->
+                <div class="flex-none">
+                    <a href="#" class="text-3xl font-bold tangerine text-black">EnCour Social</a>
+                </div>
+                
+                <!-- Desktop menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link relative libra-sans text-gray-700">Home</a>
+                    <a href="#services" class="nav-link relative libra-sans text-gray-700">Services</a>
+                    <a href="#about" class="nav-link relative libra-sans text-gray-700">About</a>
+                    <a href="#contact" class="nav-link relative libra-sans text-gray-700">Contact</a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-btn" class="md:hidden focus:outline-none z-50 p-2 rounded-lg transition-all duration-300 hover:bg-pink-100 w-10 flex justify-center">
+                    <svg id="hamburger-icon" class="w-6 h-6 text-gray-700 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                   
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="fixed inset-0  z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
+            <div class="flex flex-col items-center justify-center h-screen px-8">
+                <div class="gradient-border animate-border-glow w-full max-w-sm relative">
+                    <div class="bg-white rounded-3xl shadow-2xl p-8 w-full relative">
+                    <!-- Close Button -->
+                    <button id="mobile-menu-close" class="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-200">
+                        <i class="fas fa-times text-gray-600 text-sm"></i>
+                    </button>
+                    <div class="space-y-4">
+                        <a href="#home" class="mobile-nav-card flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 hover:bg-gradient-to-r hover:from-orange-50 hover:to-orange-100 hover:shadow-lg hover:scale-105 transform active:scale-95">
+                            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center transition-all duration-300 hover:bg-orange-200 hover:shadow-md">
+                                <i class="fas fa-home text-orange-500 text-sm transition-all duration-300 hover:text-orange-600 hover:scale-110"></i>
+                            </div>
+                            <span class="text-gray-700 font-medium libra-sans transition-all duration-300 hover:text-orange-600">Home</span>
+                        </a>
+                        <a href="#services" class="mobile-nav-card flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:shadow-lg hover:scale-105 transform active:scale-95">
+                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center transition-all duration-300 hover:bg-purple-200 hover:shadow-md">
+                                <i class="fas fa-briefcase text-purple-500 text-sm transition-all duration-300 hover:text-purple-600 hover:scale-110"></i>
+                            </div>
+                            <span class="text-gray-700 font-medium libra-sans transition-all duration-300 hover:text-purple-600">Services</span>
+                        </a>
+                        <a href="#about" class="mobile-nav-card flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:shadow-lg hover:scale-105 transform active:scale-95">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center transition-all duration-300 hover:bg-blue-200 hover:shadow-md">
+                                <i class="fas fa-user text-blue-500 text-sm transition-all duration-300 hover:text-blue-600 hover:scale-110"></i>
+                            </div>
+                            <span class="text-gray-700 font-medium libra-sans transition-all duration-300 hover:text-blue-600">About</span>
+                        </a>
+                        <a href="#contact" class="mobile-nav-card flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-yellow-100 hover:shadow-lg hover:scale-105 transform active:scale-95">
+                            <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center transition-all duration-300 hover:bg-yellow-200 hover:shadow-md">
+                                <i class="fas fa-envelope text-yellow-500 text-sm transition-all duration-300 hover:text-yellow-600 hover:scale-110"></i>
+                            </div>
+                            <span class="text-gray-700 font-medium libra-sans transition-all duration-300 hover:text-yellow-600">Contact</span>
+                        </a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <div id="particles-js" class="absolute inset-0"></div>
+        <div class="container mx-auto px-6 py-20 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Side - Image -->
+                <div class="order-2 lg:order-1 animate-fade-in-left">
+                    <div class="relative">
+                        <!-- Image Placeholder -->
+                        <div class="w-full h-96 lg:h-[500px] bg-gradient-to-br from-pink-100 via-gray-50 to-pink-200 rounded-3xl shadow-2xl overflow-hidden relative">
+                            <!-- Image Element -->
+                            <img src="Images/hero.webp" alt="Courtney Amelia Photography" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                            
+                            <!-- Fallback Placeholder (shown only if image fails to load) -->
+                            <div class="absolute inset-0 items-center justify-center bg-gradient-to-br from-pink-100 via-gray-50 to-pink-200" style="display: none;">
+                                <div class="text-center">
+                                    <i class="fas fa-camera text-6xl text-gray-400 mb-4 animate-pulse"></i>
+                                    <p class="libra-sans text-gray-500 text-lg">Image not found: Images/hero.webp</p>
+                                </div>
+                            </div>
+                            <!-- Decorative Elements -->
+                            <div class="absolute top-4 right-4 w-8 h-8 bg-pink-300 rounded-full animate-bounce opacity-60"></div>
+                            <div class="absolute bottom-6 left-6 w-6 h-6 bg-gray-400 rounded-full animate-pulse opacity-50"></div>
+                        </div>
+                        <!-- Image Border Effect -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-pink-300 to-gray-300 rounded-3xl blur opacity-30 animate-pulse"></div>
+                    </div>
+                </div>
+                
+                <!-- Right Side - Content -->
+                <div class="order-1 lg:order-2 text-center lg:text-left">
+                    <h1 class="tangerine text-4xl md:text-6xl lg:text-7xl xl:text-8xl text-black animate-fade-in-up leading-tight pt-12 sm:pt-0">
+                        Elegant Photography & Social Media Solutions
+                    </h1>
+                    <p class="libra-sans text-sm md:text-xl  text-gray-700 mt-6 mb-8 lg:mb-12 animate-fade-in-up delayed-1 leading-relaxed">
+                        Event photography, social media management, and content strategies that connect and convert.
+                    </p>
+                    <a href="#contact" class="btn-gradient text-gray-800 libra-sans font-semibold px-8 py-3 lg:px-10 lg:py-4 rounded-full inline-block hover-glow animate-fade-in-up delayed-2 text-base lg:text-lg tracking-wide">
+                        <span class="relative z-10">Work With Me</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating elements -->
+        <div class="absolute top-1/4 left-1/4 w-8 h-8 rounded-full bg-white bg-opacity-30 animate-float animate-shimmer"></div>
+        <div class="absolute top-1/3 right-1/4 w-6 h-6 rounded-full bg-white bg-opacity-40 animate-float delayed-1 animate-shimmer"></div>
+        <div class="absolute bottom-1/4 right-1/3 w-10 h-10 rounded-full bg-white bg-opacity-20 animate-float delayed-2 animate-shimmer"></div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
+        <!-- Animated background elements -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-32 h-32 bg-black rounded-full animate-pulse"></div>
+            <div class="absolute top-40 right-20 w-24 h-24 bg-gray-600 rounded-full animate-bounce" style="animation-delay: 1s;"></div>
+            <div class="absolute bottom-20 left-1/4 w-20 h-20 bg-gray-800 rounded-full animate-ping" style="animation-delay: 2s;"></div>
+            <div class="absolute bottom-40 right-1/3 w-16 h-16 bg-black rounded-full animate-pulse" style="animation-delay: 3s;"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <!-- Enhanced Section Header -->
+            <div class="relative mb-20">
+                <!-- Decorative Background Elements -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-10">
+                    <div class="w-96 h-96 bg-gradient-to-r from-pink-300 to-purple-300 rounded-full blur-3xl animate-pulse"></div>
+                </div>
+                
+                <!-- Main Heading with Enhanced Design -->
+                <div class="relative z-10 text-center">
+                    <!-- Decorative Line Above -->
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent w-32 animate-fade-in"></div>
+                        <div class="mx-4">
+                            <i class="fas fa-camera text-2xl text-gray-600 animate-bounce"></i>
+                        </div>
+                        <div class="h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent w-32 animate-fade-in"></div>
+                    </div>
+                    
+                    <!-- Main Title -->
+                    <h2 class="tangerine font-bold text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-gray-800 via-black to-gray-800 bg-clip-text text-transparent mb-4 animate-fade-in-up transform hover:scale-105 transition-all duration-500 drop-shadow-lg">
+                        What I Offer
+                    </h2>
+                    
+                    <!-- Subtitle -->
+                    <p class="libra-sans text-lg md:text-xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up delayed-1 leading-relaxed">
+                        Professional photography services tailored to capture your most precious moments
+                    </p>
+                    
+                    <!-- Decorative Line Below -->
+                    <div class="flex items-center justify-center mt-6">
+                        <div class="h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent w-24 animate-fade-in delayed-2"></div>
+                        <div class="mx-3">
+                            <div class="w-2 h-2 bg-gray-600 rounded-full animate-pulse"></div>
+                        </div>
+                        <div class="h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent w-24 animate-fade-in delayed-2"></div>
+                    </div>
+                </div>
+                
+                <!-- Floating Decorative Elements -->
+                <div class="absolute top-0 left-1/4 w-4 h-4 bg-pink-300 rounded-full animate-float" style="animation-delay: 0.5s;"></div>
+                <div class="absolute top-10 right-1/4 w-3 h-3 bg-purple-300 rounded-full animate-float" style="animation-delay: 1.5s;"></div>
+                <div class="absolute bottom-0 left-1/3 w-2 h-2 bg-gray-400 rounded-full animate-float" style="animation-delay: 2.5s;"></div>
+            </div>
+            
+            <!-- Services Carousel -->
+            <div class="relative max-w-6xl mx-auto">
+                <!-- Carousel Container -->
+                <div class="overflow-hidden rounded-2xl shadow-2xl bg-white/10 backdrop-blur-sm p-2 md:p-4">
+                    <div id="services-carousel" class="flex transition-transform duration-500 ease-in-out">
+                        <!-- Service Card 1 -->
+                        <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 md:px-4">
+                            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-fade-in delayed-1 border-l-4 border-black h-full">
+                                <div class="text-gray-800 text-4xl mb-4 transform hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-camera animate-pulse"></i>
+                                </div>
+                                <h3 class="libra-sans text-xl font-bold mb-2 text-black hover:text-gray-700 transition-colors duration-300">Event Photography</h3>
+                                <p class="libra-sans text-gray-600 hover:text-gray-800 transition-colors duration-300">Capture your special moments with professional event photography that tells your story.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Service Card 2 -->
+                        <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 md:px-4">
+                            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-fade-in delayed-1 border-l-4 border-gray-700 h-full">
+                                <div class="text-black text-4xl mb-4 transform hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-video animate-bounce"></i>
+                                </div>
+                                <h3 class="libra-sans text-xl font-bold mb-2 text-black hover:text-gray-700 transition-colors duration-300">Event Videography</h3>
+                                <p class="libra-sans text-gray-600 hover:text-gray-800 transition-colors duration-300">Bring your events to life with dynamic videography that engages your audience.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Service Card 8 -->
+                        <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 md:px-4">
+                            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-fade-in delayed-4 border-l-4 border-gray-700 h-full">
+                                <div class="text-gray-700 text-4xl mb-4 transform hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-bullhorn animate-pulse"></i>
+                                </div>
+                                <h3 class="libra-sans text-xl font-bold mb-2 text-black hover:text-gray-700 transition-colors duration-300">Business Promotional Content</h3>
+                                <p class="libra-sans text-gray-600 hover:text-gray-800 transition-colors duration-300">Showcase your business with professional promotional content that stands out.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Service Card 3 -->
+                        <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 md:px-4">
+                            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-fade-in delayed-2 border-l-4 border-black h-full">
+                                <div class="text-gray-800 text-4xl mb-4 transform hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-building animate-bounce"></i>
+                                </div>
+                                <h3 class="libra-sans text-xl font-bold mb-2 text-black hover:text-gray-700 transition-colors duration-300">Business Photography</h3>
+                                <p class="libra-sans text-gray-600 hover:text-gray-800 transition-colors duration-300">Professional photography that captures the essence of your business and brand.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Service Card 4 -->
+                        <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 md:px-4">
+                            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-fade-in delayed-2 border-l-4 border-gray-600 h-full">
+                                <div class="text-black text-4xl mb-4 transform hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-hands-helping animate-pulse"></i>
+                                </div>
+                                <h3 class="libra-sans text-xl font-bold mb-2 text-black hover:text-gray-700 transition-colors duration-300">Social Media Assistant</h3>
+                                <p class="libra-sans text-gray-600 hover:text-gray-800 transition-colors duration-300">Get expert assistance with your social media presence and content creation.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Service Card 6 -->
+                        <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 md:px-4">
+                            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-fade-in delayed-3 border-l-4 border-gray-800 h-full">
+                                <div class="text-gray-700 text-4xl mb-4 transform hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-users-cog animate-bounce"></i>
+                                </div>
+                                <h3 class="libra-sans text-xl font-bold mb-2 text-black hover:text-gray-700 transition-colors duration-300">Social Media Manager</h3>
+                                <p class="libra-sans text-gray-600 hover:text-gray-800 transition-colors duration-300">Full-service social media management to grow your online presence.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Service Card 5 -->
+                        <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 md:px-4">
+                            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-fade-in delayed-3 border-l-4 border-black h-full">
+                                <div class="text-gray-800 text-4xl mb-4 transform hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-lightbulb animate-pulse"></i>
+                                </div>
+                                <h3 class="libra-sans text-xl font-bold mb-2 text-black hover:text-gray-700 transition-colors duration-300">Social Media Advisor</h3>
+                                <p class="libra-sans text-gray-600 hover:text-gray-800 transition-colors duration-300">Strategic advice to optimize your social media performance and engagement.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Service Card 7 -->
+                        <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 md:px-4">
+                            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-fade-in delayed-4 border-l-4 border-black h-full">
+                                <div class="text-black text-4xl mb-4 transform hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-plus-circle animate-bounce"></i>
+                                </div>
+                                <h3 class="libra-sans text-xl font-bold mb-2 text-black hover:text-gray-700 transition-colors duration-300">Tailored Solutions</h3>
+                                <p class="libra-sans text-gray-600 hover:text-gray-800 transition-colors duration-300">Custom services designed specifically for your unique business needs.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation Arrows -->
+                <button id="prev-btn" class="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 md:p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-10 group">
+                    <i class="fas fa-chevron-left text-lg md:text-xl group-hover:scale-110 transition-transform duration-300"></i>
+                </button>
+                <button id="next-btn" class="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 md:p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-10 group">
+                    <i class="fas fa-chevron-right text-lg md:text-xl group-hover:scale-110 transition-transform duration-300"></i>
+                </button>
+                
+                <!-- Dots Indicator -->
+                <div class="flex justify-center mt-6 md:mt-8 space-x-3 md:space-x-2">
+                    <button class="carousel-dot w-4 h-4 md:w-3 md:h-3 rounded-full bg-gray-400 hover:bg-gray-600 transition-all duration-300" data-slide="0"></button>
+                    <button class="carousel-dot w-4 h-4 md:w-3 md:h-3 rounded-full bg-gray-400 hover:bg-gray-600 transition-all duration-300" data-slide="1"></button>
+                    <button class="carousel-dot w-4 h-4 md:w-3 md:h-3 rounded-full bg-gray-400 hover:bg-gray-600 transition-all duration-300" data-slide="2"></button>
+                    <button class="carousel-dot w-4 h-4 md:w-3 md:h-3 rounded-full bg-gray-400 hover:bg-gray-600 transition-all duration-300" data-slide="3"></button>
+                    <button class="carousel-dot w-4 h-4 md:w-3 md:h-3 rounded-full bg-gray-400 hover:bg-gray-600 transition-all duration-300" data-slide="4"></button>
+                    <button class="carousel-dot w-4 h-4 md:w-3 md:h-3 rounded-full bg-gray-400 hover:bg-gray-600 transition-all duration-300" data-slide="5"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 relative overflow-hidden" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 25%, #ffc0cb 50%, #d3d3d3 75%, #a9a9a9 100%);">
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-10 left-10 w-20 h-20 bg-pink-300 rounded-full opacity-30 animate-pulse"></div>
+            <div class="absolute top-32 right-20 w-16 h-16 bg-gray-400 rounded-full opacity-40 animate-bounce" style="animation-delay: 0.5s;"></div>
+            <div class="absolute bottom-20 left-1/4 w-24 h-24 bg-pink-200 rounded-full opacity-25 animate-ping" style="animation-delay: 1s;"></div>
+            <div class="absolute bottom-32 right-1/3 w-12 h-12 bg-gray-300 rounded-full opacity-35 animate-pulse" style="animation-delay: 1.5s;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-pink-100 rounded-full opacity-20 animate-spin" style="animation-duration: 20s;"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-7xl mx-auto">
+                <!-- Enhanced About Section Header -->
+                <div class="relative mb-16">
+                    <!-- Decorative Background Elements -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-10">
+                        <div class="w-80 h-80 bg-gradient-to-r from-pink-300 via-rose-300 to-pink-400 rounded-full blur-3xl animate-pulse"></div>
+                    </div>
+                    
+                    <!-- Main Heading with Enhanced Design -->
+                    <div class="relative z-10 text-center">
+                        <!-- Decorative Line Above -->
+                        <div class="flex items-center justify-center mb-6">
+                            <div class="h-px bg-gradient-to-r from-transparent via-pink-400 to-transparent w-32 animate-fade-in"></div>
+                            <div class="mx-4">
+                                <i class="fas fa-heart text-2xl text-pink-500 animate-bounce"></i>
+                            </div>
+                            <div class="h-px bg-gradient-to-r from-transparent via-pink-400 to-transparent w-32 animate-fade-in"></div>
+                        </div>
+                        
+                        <!-- Main Title -->
+                        <h2 class="tangerine font-bold text-5xl md:text-7xl lg:text-7xl bg-gradient-to-r from-pink-600 via-rose-700 to-pink-800 bg-clip-text text-transparent mb-4 animate-fade-in-up transform hover:scale-105 transition-all duration-500 drop-shadow-lg">
+                            About EnCour
+                        </h2>
+                        
+                        <!-- Subtitle -->
+                        <p class="libra-sans text-lg md:text-xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up delayed-1 leading-relaxed">
+                            Discover the passion and creativity behind every captured moment
+                        </p>
+                        
+                        <!-- Decorative Line Below -->
+                        <div class="flex items-center justify-center mt-6">
+                            <div class="h-px bg-gradient-to-r from-transparent via-pink-400 to-transparent w-24 animate-fade-in delayed-2"></div>
+                            <div class="mx-3">
+                                <div class="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></div>
+                            </div>
+                            <div class="h-px bg-gradient-to-r from-transparent via-pink-400 to-transparent w-24 animate-fade-in delayed-2"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Decorative Elements -->
+                    <div class="absolute top-0 left-1/4 w-4 h-4 bg-pink-400 rounded-full animate-float" style="animation-delay: 0.5s;"></div>
+                    <div class="absolute top-10 right-1/4 w-3 h-3 bg-rose-400 rounded-full animate-float" style="animation-delay: 1.5s;"></div>
+                    <div class="absolute bottom-0 left-1/3 w-2 h-2 bg-pink-300 rounded-full animate-float" style="animation-delay: 2.5s;"></div>
+                </div>
+                
+                <div class="grid lg:grid-cols-5 gap-8 items-start">
+                    <!-- Left Side - Experience Cards -->
+                    <div class="lg:col-span-2 space-y-6 pt-8">
+                        <div class="bg-gradient-to-r from-pink-100 to-pink-200 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 border-2 border-pink-300 hover:border-pink-400">
+                            <div class="flex items-center mb-3">
+                                <div class="w-12 h-12 bg-pink-400 rounded-full flex items-center justify-center mr-4 animate-pulse">
+                                    <i class="fas fa-camera text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-black">7+ Years Experience</h3>
+                            </div>
+                            <p class="text-black text-sm">Photography & Social Media Management</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 border-2 border-gray-300 hover:border-gray-400">
+                            <div class="flex items-center mb-3">
+                                <div class="w-12 h-12 bg-gray-500 rounded-full flex items-center justify-center mr-4 animate-bounce">
+                                    <i class="fas fa-users text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-black">10K+ Followers</h3>
+                            </div>
+                            <p class="text-black text-sm">Instagram Community Growth</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-pink-50 to-gray-100 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 border-2 border-pink-200 hover:border-pink-300">
+                            <div class="flex items-center mb-3">
+                                <div class="w-12 h-12 bg-gradient-to-r from-pink-400 to-gray-400 rounded-full flex items-center justify-center mr-4 animate-pulse">
+                                    <i class="fas fa-building text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-black">Multi-Industry</h3>
+                            </div>
+                            <p class="text-black text-sm">Property, Lettings & Beyond</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side - Main Content -->
+                    <div class="lg:col-span-3 bg-white bg-opacity-80 p-6 sm:p-8 lg:p-10 rounded-xl shadow-xl backdrop-blur-sm border border-pink-200 hover:shadow-2xl transition-all duration-300">
+                        <div class="h-1 w-16 sm:w-20 bg-gradient-to-r from-pink-400 to-gray-400 mb-4 sm:mb-6 rounded-full animate-pulse mx-auto"></div>
+                        
+                        <p class="libra-sans text-black mb-4 sm:mb-6 leading-relaxed text-left text-justify text-sm sm:text-base">
+                            Hi, I'm Courtney — founder of EnCour Social, a modern social media management company based in Northamptonshire. With <span class="font-semibold text-pink-600">7 years of hands-on photography experience</span> managing content, engagement, and growth strategies in the property and lettings industry, I've expanded my expertise to help brands across different sectors show up confidently online.
+                        </p>
+                        
+                        <p class="libra-sans text-black mb-4 sm:mb-6 leading-relaxed text-left text-justify text-sm sm:text-base">
+                            At EnCour Social, I help businesses build consistent, creative, and conversion-driven content. Whether it's just advice you're looking for to get started or someone to <span class="font-semibold text-gray-600">photograph your venue or event</span>, I'd love to help!
+                        </p>
+                        
+                        <p class="libra-sans text-black mb-4 sm:mb-6 leading-relaxed text-left text-justify text-sm sm:text-base">
+                            I've also grown my personal Instagram community to over 10,000 followers, so I understand what it takes to connect authentically in the social space. Let's craft content that's not only on-trend, but on-brand — and always aligned with your business.
+                        </p>
+                        
+                        <div class="text-center mt-6 sm:mt-8">
+                            <p class="text-xs sm:text-sm text-black font-medium italic px-2">
+                                "Capturing moments, creating connections, building brands."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating Animation Elements -->
+        <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 w-2 h-2 bg-pink-400 rounded-full animate-ping" style="animation-delay: 2s;"></div>
+            <div class="absolute top-3/4 right-1/4 w-3 h-3 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 3s;"></div>
+            <div class="absolute top-1/2 right-1/6 w-1 h-1 bg-pink-300 rounded-full animate-bounce" style="animation-delay: 4s;"></div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-12 bg-gradient-to-br from-pink-200 via-gray-100 to-pink-100 relative overflow-hidden">
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0 opacity-30">
+            <div class="absolute top-10 left-10 text-pink-400 animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">
+                <i class="fas fa-camera text-4xl"></i>
+            </div>
+            <div class="absolute top-32 right-16 text-gray-400 animate-pulse" style="animation-delay: 1s; animation-duration: 4s;">
+                <i class="fas fa-camera-retro text-3xl"></i>
+            </div>
+            <div class="absolute bottom-20 left-20 text-pink-500 animate-ping" style="animation-delay: 2s; animation-duration: 5s;">
+                <i class="fas fa-aperture text-2xl"></i>
+            </div>
+            <div class="absolute bottom-32 right-10 text-gray-300 animate-bounce" style="animation-delay: 0.5s; animation-duration: 3.5s;">
+                <i class="fas fa-camera text-5xl"></i>
+            </div>
+            <div class="absolute top-1/2 left-1/4 text-pink-600 animate-pulse" style="animation-delay: 1.5s; animation-duration: 2.5s;">
+                <i class="fas fa-film text-xl"></i>
+            </div>
+            <div class="absolute top-1/3 right-1/3 text-gray-500 animate-ping" style="animation-delay: 3s; animation-duration: 4.5s;">
+                <i class="fas fa-camera-retro text-3xl"></i>
+            </div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="tangerine text-4xl md:text-6xl lg:text-7xl text-center bg-gradient-to-r from-pink-600 to-gray-600 bg-clip-text text-transparent mb-12 animate-fade-in-right">Follow My Journey</h2>
+            
+            <div class="max-w-4xl mx-auto px-4 sm:px-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 text-center">
+                    <!-- Instagram Card -->
+                    <div class="bg-white/90 backdrop-blur-sm p-5 sm:p-6 md:p-5 lg:p-6 rounded-2xl shadow-lg border border-pink-200/50 animate-fade-in-up delayed-1 transform hover:scale-105 transition-all duration-300">
+                        <!-- Instagram Icon -->
+                      <div class="mb-3 sm:mb-4 text-center">
+                            <div class="inline-block w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-16 lg:h-16 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 rounded-full animate-pulse flex items-center justify-center">
+                                <i class="fab fa-instagram text-white text-xl sm:text-2xl md:text-3xl lg:text-3xl"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Instagram Handle -->
+                        <h3 class="text-base sm:text-lg md:text-xl lg:text-xl font-bold text-gray-800 mb-2 sm:mb-3">@courtney_amelia_</h3>
+                        
+                        <!-- Description -->
+                        <p class="libra-sans text-gray-600 mb-3 sm:mb-4 text-xs sm:text-sm md:text-sm lg:text-base leading-relaxed px-2">
+                            Join 10K+ followers for daily photography tips and behind-the-scenes content!
+                        </p>
+                        
+                        <!-- Follow Button -->
+                        <a href="https://www.instagram.com/courtney_amelia_/" class="inline-block bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white font-bold py-2.5 px-5 sm:py-2 sm:px-4 md:py-3 md:px-5 rounded-full text-xs sm:text-sm md:text-sm transform hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fab fa-instagram mr-1.5 sm:mr-2"></i>
+                            Follow Now
+                        </a>
+                    </div>
+                    
+                    <!-- Facebook Card -->
+                    <div class="bg-white/90 backdrop-blur-sm p-5 sm:p-6 md:p-5 lg:p-6 rounded-2xl shadow-lg border border-pink-200/50 animate-fade-in-up delayed-2 transform hover:scale-105 transition-all duration-300">
+                        <!-- Facebook Icon -->
+                        <div class="mb-3 sm:mb-4 text-center">
+                            <div class="inline-block w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-full animate-pulse flex items-center justify-center">
+                                <i class="fab fa-facebook-f text-white text-xl sm:text-2xl md:text-3xl lg:text-3xl"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Facebook Handle -->
+                        <h3 class="text-base sm:text-lg md:text-xl lg:text-xl font-bold text-gray-800 mb-2 sm:mb-3">Courtney Winterson Music</h3>
+                        
+                        <!-- Description -->
+                        <p class="libra-sans text-gray-600 mb-3 sm:mb-4 text-xs sm:text-sm md:text-sm lg:text-base leading-relaxed px-2">
+                            Connect with me for photography tutorials and music showcases.
+                        </p>
+                        
+                        <!-- Follow Button -->
+                        <a href="https://www.facebook.com/CourtneyWintersonMusic/" class="inline-block bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white font-bold py-2.5 px-5 sm:py-2 sm:px-4 md:py-3 md:px-5 rounded-full text-xs sm:text-sm md:text-sm transform hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fab fa-facebook-f mr-1.5 sm:mr-2"></i>
+                            Like Page
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <div class="mb-4">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Courtney Amelia</h3>
+                <p class="text-gray-600 font-small">Creative Photography</p>
+            </div>
+            <p class="libra-sans text-gray-600">&copy; 2025 EnCour Social. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Create floating particles
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroSection = document.getElementById('home');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 2px and 6px
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation duration
+                const duration = Math.random() * 10 + 5;
+                particle.style.animation = `float ${duration}s ease-in-out infinite`;
+                
+                // Random delay
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                heroSection.appendChild(particle);
+            }
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Intersection Observer for animations
+            const animateOnScroll = function() {
+                const elements = document.querySelectorAll('.animate-fade-in, .animate-fade-in-up, .animate-fade-in-left, .animate-fade-in-right');
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add(entry.target.dataset.animation);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.1
+                });
+                
+                elements.forEach(element => {
+                    observer.observe(element);
+                });
+            };
+            
+            animateOnScroll();
+        });
+    </script>
+    
+    <!-- Active Section Detection Script -->
+    <script>
+        // Function to update active navigation link based on current section
+        function updateActiveNavLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 200) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Update active link on scroll
+        window.addEventListener('scroll', updateActiveNavLink);
+        
+        // Update active link on page load
+        window.addEventListener('load', updateActiveNavLink);
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Mobile Menu Functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+        const closeIcon = document.getElementById('close-icon');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-card');
+        
+        function openMobileMenu() {
+            mobileMenu.classList.remove('translate-x-full');
+            hamburgerIcon.classList.add('hidden');
+            closeIcon.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            mobileMenu.classList.add('translate-x-full');
+            hamburgerIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        // Toggle mobile menu
+        mobileMenuBtn.addEventListener('click', function() {
+            if (mobileMenu.classList.contains('translate-x-full')) {
+                openMobileMenu();
+            } else {
+                closeMobileMenu();
+            }
+        });
+        
+        // Close menu when clicking close button
+        mobileMenuClose.addEventListener('click', function() {
+            closeMobileMenu();
+        });
+        
+        // Close menu when clicking outside
+        mobileMenu.addEventListener('click', function(e) {
+            if (e.target === mobileMenu) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Close menu when clicking navigation links
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                closeMobileMenu();
+            });
+        });
+        
+        // Close menu on window resize (if desktop)
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Services Carousel Functionality
+        const carousel = document.getElementById('services-carousel');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const dots = document.querySelectorAll('.carousel-dot');
+        
+        let currentSlide = 0;
+        let cardsPerView = 3; // Default for desktop
+        let totalSlides = 6; // Total number of slides based on cards per view
+        
+        // Update cards per view based on screen size
+        function updateCardsPerView() {
+            if (window.innerWidth < 768) {
+                cardsPerView = 1;
+                totalSlides = 8;
+            } else if (window.innerWidth < 1024) {
+                cardsPerView = 2;
+                totalSlides = 7;
+            } else {
+                cardsPerView = 3;
+                totalSlides = 6;
+            }
+        }
+        
+        // Update carousel position
+        function updateCarousel() {
+            const translateX = -(currentSlide * (100 / cardsPerView));
+            carousel.style.transform = `translateX(${translateX}%)`;
+            
+            // Update dots
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.remove('bg-gray-400');
+                    dot.classList.add('bg-gray-800');
+                } else {
+                    dot.classList.remove('bg-gray-800');
+                    dot.classList.add('bg-gray-400');
+                }
+            });
+        }
+        
+        // Next slide
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+        }
+        
+        // Previous slide
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        }
+        
+        // Go to specific slide
+        function goToSlide(slideIndex) {
+            currentSlide = slideIndex;
+            updateCarousel();
+        }
+        
+        // Event listeners
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+        
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => goToSlide(index));
+        });
+        
+        // Manual navigation only - no auto-play
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            updateCardsPerView();
+            currentSlide = 0; // Reset to first slide on resize
+            updateCarousel();
+        });
+        
+        // Initialize carousel
+        updateCardsPerView();
+        updateCarousel();
+        
+        // Touch/swipe support for mobile
+        let startX = 0;
+        let endX = 0;
+        
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+        
+        carousel.addEventListener('touchend', (e) => {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
